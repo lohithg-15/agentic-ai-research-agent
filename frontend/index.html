@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ResearchMind — AI Literature Review</title>
+    <meta name="description" content="AI-powered academic literature review using a 6-agent pipeline with Gemini, arXiv, and Semantic Scholar." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+    <!-- ─── Ambient Background ─────────────────────────────── -->
+    <div class="bg-glow bg-glow--1"></div>
+    <div class="bg-glow bg-glow--2"></div>
+
+    <!-- ─── Header ─────────────────────────────────────────── -->
+    <header class="header" id="header">
+        <div class="header__brand">
+            <span class="header__icon">&#x1F9E0;</span>
+            <span class="header__title">ResearchMind</span>
+        </div>
+        <p class="header__sub">AI-Powered Academic Literature Review</p>
+    </header>
+
+    <!-- ─── Hero / Search Section ──────────────────────────── -->
+    <main>
+        <section class="hero" id="heroSection">
+            <h1 class="hero__heading">Explore any research topic<br /><span class="gradient-text">in seconds.</span></h1>
+            <p class="hero__sub">Our 6-agent AI pipeline searches arXiv &amp; Semantic Scholar, analyses papers, synthesises themes, and produces a full literature review — automatically.</p>
+
+            <form class="search-box" id="searchForm">
+                <input
+                    type="text"
+                    id="queryInput"
+                    class="search-box__input"
+                    placeholder="e.g. transformer architecture in NLP"
+                    autocomplete="off"
+                    required
+                />
+                <button type="submit" class="search-box__btn" id="searchBtn">
+                    <span class="btn-text">Start Research</span>
+                    <span class="btn-loader" id="btnLoader"></span>
+                </button>
+            </form>
+
+            <div class="search-box__chips">
+                <button type="button" class="chip" data-query="transformer architecture in NLP">Transformers in NLP</button>
+                <button type="button" class="chip" data-query="reinforcement learning robotics">RL &amp; Robotics</button>
+                <button type="button" class="chip" data-query="gene editing CRISPR applications">CRISPR Applications</button>
+            </div>
+        </section>
+
+        <!-- ─── Progress Section ───────────────────────────── -->
+        <section class="progress-section hidden" id="progressSection">
+            <h2 class="section-title">Pipeline Progress</h2>
+            <div class="pipeline" id="pipeline">
+                <!-- JS will inject 6 agent cards -->
+            </div>
+        </section>
+
+        <!-- ─── Report Section ─────────────────────────────── -->
+        <section class="report-section hidden" id="reportSection">
+            <div class="report-header">
+                <h2 class="section-title">Research Report</h2>
+                <button class="btn-outline" id="newSearchBtn">New Search</button>
+            </div>
+            <div class="report-card" id="reportCard">
+                <!-- JS will render the report here -->
+            </div>
+        </section>
+
+        <!-- ─── Error Banner ───────────────────────────────── -->
+        <div class="error-banner hidden" id="errorBanner">
+            <p id="errorText"></p>
+            <button class="btn-outline btn-outline--sm" id="errorRetry">Try Again</button>
+        </div>
+    </main>
+
+    <!-- ─── Footer ─────────────────────────────────────────── -->
+    <footer class="footer">
+        <p>Built with <strong>Gemini</strong> &bull; arXiv &bull; Semantic Scholar &mdash; 6-agent agentic pipeline</p>
+    </footer>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
