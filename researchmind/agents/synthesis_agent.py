@@ -31,20 +31,32 @@ class SynthesisAgent:
         self.memory.log(self.name, f"Starting synthesis of {len(summaries)} summaries")
 
         if not summaries:
-            self.memory.log(self.name, "⚠ No summaries to synthesize")
+            self.memory.log(self.name, "No summaries to synthesize")
             return
 
         # Step 1: Initial synthesis
         self.memory.log(self.name, "Phase 1: Generating initial synthesis...")
-        initial_synthesis = await self._generate_synthesis(summaries)
+        try:
+            initial_synthesis = await self._generate_synthesis(summaries)
+        except Exception as e:
+            self.memory.log(self.name, f"Synthesis generation failed: {e}")
+            initial_synthesis = self._fallback_synthesis(summaries)
 
         # Step 2: Self-reflection — review own output
         self.memory.log(self.name, "Phase 2: Self-reflecting on synthesis quality...")
-        reflection = await self._self_reflect(initial_synthesis, summaries)
+        try:
+            reflection = await self._self_reflect(initial_synthesis, summaries)
+        except Exception as e:
+            self.memory.log(self.name, f"Self-reflection failed: {e}")
+            reflection = "[Self-reflection unavailable]"
 
         # Step 3: Improve based on reflection
         self.memory.log(self.name, "Phase 3: Improving synthesis based on self-critique...")
-        improved_synthesis = await self._improve_synthesis(initial_synthesis, reflection, summaries)
+        try:
+            improved_synthesis = await self._improve_synthesis(initial_synthesis, reflection, summaries)
+        except Exception as e:
+            self.memory.log(self.name, f"Improvement failed: {e}")
+            improved_synthesis = initial_synthesis
 
         # Store the synthesis with reflection metadata
         synthesis_data = {
@@ -53,11 +65,19 @@ class SynthesisAgent:
             "self_reflection": reflection,
             "final_synthesis": improved_synthesis,
             "papers_synthesized": len(summaries),
-            "self_reflection_applied": True,
+            "self_reflection_applied": reflection != "[Self-reflection unavailable]",
         }
 
         self.memory.set_synthesis(synthesis_data)
-        self.memory.log(self.name, "✅ Synthesis complete (with self-reflection)")
+        self.memory.log(self.name, "Synthesis complete")
+
+    def _fallback_synthesis(self, summaries: list[dict]) -> str:
+        """Build a basic synthesis when Gemini is unavailable."""
+        lines = [f"Synthesis of {len(summaries)} papers on \"{self.memory.topic}\":\n"]
+        for i, s in enumerate(summaries):
+            lines.append(f"- Paper {i + 1}: {s.get('paper_title', 'Untitled')} ({s.get('paper_year', 'N/A')})")
+        lines.append("\n[Full AI-powered synthesis unavailable — Gemini API error. The papers above were found and analysed.]")
+        return "\n".join(lines)
 
     async def _generate_synthesis(self, summaries: list[dict]) -> str:
         """Generate initial cross-paper synthesis."""
